@@ -71,10 +71,10 @@ def date_to_str(date_str):
 
 def date_to_weekday(date_str):
     if date_str.count("/") > 0:
-        day, month, year = date_str.split("/")
+        month, day, year = date_str.split("/")
         parsed_date = "%s-%s-%s" % (year, month, day)
         date_str = parsed_date
-    return time.strftime("%A", time.strptime(date_str, "%Y-%m-%d"))
+    return time.strftime("%A", time.strptime(date_str, "%y-%m-%d"))
 
 
 def date_interval(initial_date, length, step=1, separator="-"):

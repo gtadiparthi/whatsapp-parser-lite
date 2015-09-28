@@ -6,6 +6,9 @@ import operator
 import sys
 import json
 
+# There are a few problems with this code. This code assumes that each message is one line. It is not.
+# Messagelist is not equal to senderlist
+#This is causing a lot of problems when working in this code
 
 class Chat():
     def __init__(self, filename):
@@ -29,7 +32,8 @@ class Chat():
     def feed_lists(self):
         for l in self.raw_messages:
             msg_date, sep, msg = l.partition(": ")
-            raw_date, sep, time = msg_date.partition(" ")
+            #Date and time has a , separator
+            raw_date, sep, time = msg_date.partition(", ")
             sender, sep, message = msg.partition(": ")
 
             if message:
@@ -51,12 +55,14 @@ class Chat():
         senders_set = set(self.senderlist)
         return [e for e in senders_set]
 
+	
     def count_messages_per_weekday(self):
         counter = dict()
         for i in range(len(self.datelist)):
-            day, month, year = self.datelist[i].split("/")
-            parsed_date = "%s-%s-%s" % (year, month, day)
-            weekday = date.date_to_weekday(parsed_date)
+            month, day, year = self.datelist[i].split("/")
+            parsed_date = "%s/%s/%s" % (year, month, day)
+           
+            weekday = datelib.date_to_weekday(self.datelist[i])
             if weekday not in counter:
                 counter[weekday] = 1
             else:
@@ -70,8 +76,11 @@ class Chat():
             "afternoon": 0,
             "evening": 0
         }
+  
         for i in range(len(self.timelist)):
             hour = int(self.timelist[i].split(":")[0])
+            if "PM" in self.timelist[i]:
+            	hour = hour + 12
             if hour >= 0 and hour <= 6:
                 shifts["latenight"] += 1
 
@@ -91,18 +100,22 @@ class Chat():
         senders = self.get_senders()
         for pattern in patternlist:
             counters[pattern] = dict()
+            
             for s in senders:
                 counters[pattern][s] = 0
             pattern_dict[pattern] = re.compile(re.escape(pattern), re.I)
+        #print(self.senderlist)
         for i in range(len(self.messagelist)):
             for pattern in patternlist:
                 search_result = pattern_dict[pattern].\
                     findall(self.messagelist[i])
                 length = len(search_result)
                 if length > 0:
+                	
                     if pattern not in counters:
                         counters[pattern][self.senderlist[i]] = length
                     else:
+                    	print i
                         counters[pattern][self.senderlist[i]] += length
         return counters
 
@@ -161,7 +174,27 @@ class Chat():
         counter = 0
         output = sorted_words[:top]
         return output
-
+	def most_used_words_per_user(self, top=10, threshold=3):
+		senders = self.get_senders()
+        
+        for s in senders:
+        	words[s] = dict()
+        	for i in range(len(self.messagelist)):
+				if s == self.senderlist[i]:
+					message_word = self.messagelist[i].split(" ")
+					for w in message_word:
+						if len(w) > threshold:
+							w = w.decode("utf8")
+							w = w.replace("\r", "")
+							w = w.lower()
+							if w not in words[s]:
+								words[s][w] = 1
+							else:
+								words[s][w] += 1
+        	sorted_words = sorted(words[s].iteritems(), key=operator.itemgetter(1), reverse=True)
+        	counter = 0
+        	output[s] = sorted_words[:top]
+        return output
 def printDict(dic, parent, depth):
     tup = sorted(dic.iteritems(), key=operator.itemgetter(1))
     isLeaf = True
@@ -210,6 +243,12 @@ def main():
     print "\n--TOP 15 MOST USED WORDS (length >= 3)"
     output["most_used_words"] = c.most_used_words(top=15, threshold=3)
     output["most_used_words"] = sorted(output["most_used_words"], key=operator.itemgetter(1), reverse=True)
+    #print output["most_used_words"]
+    for muw in output["most_used_words"]:
+        print muw[0]
+	print "\n--TOP 15 MOST USED WORDS (length >= 3)"
+    output["most_used_words_per_user"] = c.most_used_words_per_user(top=15, threshold=3)
+    output["most_used_words_per_user"] = sorted(output["most_used_words"], key=operator.itemgetter(1), reverse=True)
     #print output["most_used_words"]
     for muw in output["most_used_words"]:
         print muw[0]
