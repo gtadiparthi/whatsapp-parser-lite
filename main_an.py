@@ -310,7 +310,7 @@ def main(filenameAN):
     #    sys.exit(1)
     #c = Chat(sys.argv[1])
     c = Chat(filenameAN)
-    c.open_file()
+    c.open_file_whatsapp()
     c.feed_lists()
     output = dict()
     # number hours for 'big delay' in response time (to strip out in response
@@ -452,7 +452,7 @@ def main(filenameAN):
 
 import glob
 # read in all the chat files in the directory
-filenameTXT = glob.glob('C:/Python27/MasterChats/*.txt')
+filenameTXT = glob.glob('cse/*.txt')
 
 for f in filenameTXT:
     print f
