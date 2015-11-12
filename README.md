@@ -1,5 +1,9 @@
 whatsapp-parser
 ===============
+Forked from https://github.com/nmoya/whatsapp-parser. 
+
+
+***********
 
 Parser to the What's App log file. Feel free to fork and modify :-)
 
