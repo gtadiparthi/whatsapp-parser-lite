@@ -27,3 +27,7 @@ Requires
 pandas
 python3
 
+Acknowledgements
+----------------
+
+[nmoya's original whatsapp parser](https://github.com/nmoya/whatsapp-parser)
