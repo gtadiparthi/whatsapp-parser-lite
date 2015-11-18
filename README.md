@@ -1,8 +1,8 @@
 
-whatsapp-parser-lite
+WhatsApp-parser-lite
 ====================
 
-A lean python script for parsing whatsapp chat logs. It is especially useful to parse group conversations. 
+A lean python script for parsing WhatsApp chat logs. It is especially useful to parse group conversations. 
 
 Download
 --------
@@ -15,7 +15,7 @@ Download
 Usage
 -----
 
-Step 1: Email yourself the chat log from the whatsapp application.
+Step 1: Email yourself the chat log from the WhatsApp app.
 
 Step 2: Run the following command
 
