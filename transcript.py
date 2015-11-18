@@ -1,19 +1,11 @@
 #Include all the subtleties that are required to read a whatsapp chat transcript
 
 
-import re
-import operator
 import sys
-import os
-import json
 import csv
 import pandas as pd
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
-from os import path
-from PIL import Image, ImageFile
 import numpy as np
 import codecs
-import matplotlib.pyplot as plt
 
 class Transcript():
 	def __init__(self, inputFileName,outputFileName):
@@ -52,8 +44,9 @@ class Transcript():
 			#Date and time has a , separator
 			raw_date, sep, time = msg_date.partition(", ")
 			speaker, sep, message = msg.partition(": ")
-
+			#speaker = speaker.encode('utf-8')
 			lineNo += 1
+			# A proper whatsapp conversation with date, time, speaker, text
 			if message:
 				self.datelist.append(raw_date)
 				self.timelist.append(time)
@@ -64,8 +57,8 @@ class Transcript():
 				prevRawDate = raw_date
 				prevTime = time
 				seqNo +=1
+			# A message. date, time, message
 			elif ((speaker != "") & (self.valid_date(raw_date))):
-				print ((raw_date, self.valid_date(raw_date)));
 				self.datelist.append(raw_date)
 				self.timelist.append(time)
 				self.speakerlist.append('MESSAGE')
@@ -75,6 +68,7 @@ class Transcript():
 				prevRawDate = raw_date
 				prevTime = time
 				seqNo +=1
+			# A continuing conversation with no date time or name
 			else:
 				self.datelist.append(prevRawDate)
 				self.timelist.append(prevTime)
@@ -89,7 +83,6 @@ class Transcript():
 		writer.writerow(["SentenceNo","SequenceNo","Date","Time","Speaker","Text"])
 		for i in range(len(self.messagelist[:end])):
 			writer.writerow([i,self.paragraphList[i],self.datelist[i], self.timelist[i],self.speakerlist[i], self.messagelist[i]])
-
 
 	def get_speakers(self):
 		speakers_set = set(self.speakerlist)
