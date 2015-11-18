@@ -20,15 +20,11 @@ import matplotlib.pyplot as plt
 from transcript import *
 import re, string
 
-table = string.maketrans("","")
-
-stopwordshearing = set(["mr","go","said","one","two","three","clip",
-	"four","know","want","time","think","now","u","say","let","will","well","says","ph","ask","CROSSTALK","APPLAUSE"])
 
 
 def parse_whatsapp():
     if len(sys.argv) < 3:
-        print "Run: python main.py < Input TextFileName>  <Output csv filename>[regex. patterns]"
+        print ("Run: python main.py < Input TextFileName>  <Output csv filename>[regex. patterns]")
         sys.exit(1)
     c = Transcript(sys.argv[1], sys.argv[2])
     c.open_file()
@@ -40,7 +36,7 @@ def parse_whatsapp():
     print(c.get_speakers())
     data = pd.read_csv(sys.argv[2])
     data = data [~data.Speaker.isin(['MALE','SANTELLI','(UNKNOWN)','UNIDENTIFIED MALE','HARMAN', 'HARWOOD','CRAMER','EPPERSON','QUICK','QUINTANILLA'])]
-    print 'Unique Speakers: ', sorted(list(data.Speaker.unique()))
+    print (('Unique Speakers: ', sorted(list(data.Speaker.unique()))))
     #Count the number of words each speaker spoke
     def countWords(speaker):
         speakerData = data[data.Speaker == speaker]
@@ -49,7 +45,7 @@ def parse_whatsapp():
         	allText += str(row['Text'])+" "
 
         words_all = len(allText.split())
-        print 'Total words:   ',speaker,': ', words_all
+        print (('Total words:   ',speaker,': ', words_all))
     	
     for name in data.Speaker.unique():
     	countWords(name);

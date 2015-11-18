@@ -4,6 +4,7 @@
 import re
 import operator
 import sys
+import os
 import json
 import csv
 import pandas as pd
@@ -34,16 +35,24 @@ class Transcript():
 		lines = [l for l in lines if len(l) > 4]
 		for l in lines:
 			self.raw_messages.append(l.encode("utf-8"))
-
+	def valid_date(self,date_str):
+		valid = True
+		separator="/"
+		try:
+			year, month, day = map(int, date_str.split(separator))
+		except ValueError:
+			valid = False
+		return valid
 	def feed_lists(self):
 		lineNo = 0
 		seqNo = 0
 		for l in self.raw_messages:
-			msg_date, sep, msg = l.partition(": ")
+			l = l.rstrip()
+			msg_date, sep, msg = l.decode().partition(": ")
 			#Date and time has a , separator
 			raw_date, sep, time = msg_date.partition(", ")
 			speaker, sep, message = msg.partition(": ")
-			print l
+
 			lineNo += 1
 			if message:
 				self.datelist.append(raw_date)
@@ -52,6 +61,17 @@ class Transcript():
 				self.messagelist.append(message)
 				# store the previous speaker so that you can use it to print when there is only a line
 				prevSender = speaker
+				prevRawDate = raw_date
+				prevTime = time
+				seqNo +=1
+			elif ((speaker != "") & (self.valid_date(raw_date))):
+				print ((raw_date, self.valid_date(raw_date)));
+				self.datelist.append(raw_date)
+				self.timelist.append(time)
+				self.speakerlist.append('MESSAGE')
+				self.messagelist.append(speaker)
+				# store the previous speaker so that you can use it to print when there is only a line
+				prevSender = 'MESSAGE'
 				prevRawDate = raw_date
 				prevTime = time
 				seqNo +=1
