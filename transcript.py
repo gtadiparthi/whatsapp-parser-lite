@@ -40,7 +40,7 @@ class Transcript():
 		seqNo = 0
 		for l in self.raw_messages:
 			l = l.rstrip()
-			msg_date, sep, msg = l.decode().partition(": ")
+			msg_date, sep, msg = l.decode().partition("- ")
 			#Date and time has a , separator
 			raw_date, sep, time = msg_date.partition(", ")
 			speaker, sep, message = msg.partition(": ")
